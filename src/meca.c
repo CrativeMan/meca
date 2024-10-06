@@ -1,6 +1,7 @@
 /* imports */
 #include <ncurses.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "headers/meca.h"
 
@@ -14,9 +15,7 @@ struct editorSettings {
 struct editorSettings E;
 
 /* file i/o */
-void editorOpen(char *filepath) {
-  E.filename = filepath;
-}
+void editorOpen(char *filepath) { E.filename = filepath; }
 
 /* rendering */
 void editorDrawRows() {
@@ -41,6 +40,24 @@ void editorDrawRows() {
   wmove(stdscr, E.cy, E.cx);
 }
 
+void editorProcessKeypress() {
+  int ch = getch();
+  getyx(stdscr, E.cy, E.cx);
+  switch (ch) {
+  case 263:
+    E.cx--;
+    wmove(stdscr, (E.cy), (E.cx));
+    wdelch(stdscr);
+    break;
+  case 'q':
+    exit(0);
+    break;
+  default:
+    waddch(stdscr, (ch));
+    break;
+  }
+}
+
 /* init */
 void initEditor() {
   initscr();
@@ -59,12 +76,16 @@ void initEditor() {
 int main(int argc, char **argv) {
   initEditor();
 
+  // open a file it existent
   if (argc >= 2) {
     editorOpen(argv[1]);
   }
 
-  editorDrawRows();
-  getch();
+  // editorDrawRows();
+  while (1) {
+    editorProcessKeypress();
+    refresh();
+  }
   endwin();
   return 0;
 }

@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -pedantic -std=c99 -Wno-unused-result
+CFLAGS = -Wall -Wextra -pedantic -std=c99
 LDFLAGS = -lncurses
 SRCDIR = src
 OBJDIR = obj

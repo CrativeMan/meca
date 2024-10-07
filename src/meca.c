@@ -6,16 +6,31 @@
 #include "headers/meca.h"
 
 /* data structures */
+typedef struct {
+  char *buf;
+  int len;
+}lineBuffer;
+
 struct editorSettings {
   int screencols;
   int screenrows;
   int cx, cy;
   char *filename;
+  lineBuffer* lines;
+  int lineCount;
 };
 struct editorSettings E;
 
+void editorClose() {
+  endwin();
+}
+
 /* file i/o */
 void editorOpen(char *filepath) { E.filename = filepath; }
+
+/* line buffer */
+
+#define NEW_LINE {NULL, 0}
 
 /* rendering */
 void editorDrawRows() {
@@ -65,12 +80,15 @@ void initEditor() {
   keypad(stdscr, TRUE);
   cbreak();
   noecho();
+  atexit(editorClose);
 
   // settings
   getmaxyx(stdscr, E.screenrows, E.screencols);
   E.cx = 0;
   E.cy = 0;
   E.filename = NULL;
+  E.lines = NULL;
+  E.lineCount = 0;
 }
 
 int main(int argc, char **argv) {
@@ -81,7 +99,7 @@ int main(int argc, char **argv) {
     editorOpen(argv[1]);
   }
 
-  // editorDrawRows();
+  editorDrawRows();
   while (1) {
     editorProcessKeypress();
     refresh();

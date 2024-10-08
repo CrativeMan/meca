@@ -9,28 +9,33 @@
 typedef struct {
   char *buf;
   int len;
-}lineBuffer;
+} lineBuffer;
 
 struct editorSettings {
   int screencols;
   int screenrows;
   int cx, cy;
   char *filename;
-  lineBuffer* lines;
+  lineBuffer *lines;
   int lineCount;
 };
 struct editorSettings E;
 
-void editorClose() {
-  endwin();
-}
+void editorClose() { endwin(); }
 
 /* file i/o */
 void editorOpen(char *filepath) { E.filename = filepath; }
 
 /* line buffer */
-
 #define NEW_LINE {NULL, 0}
+#define LINEBUFFER_INITIAL_LENGTH 1028
+
+void addCharacter(int ch) {
+  if (E.lineCount == 0) {
+    E.lines = malloc(LINEBUFFER_INITIAL_LENGTH);
+    E.lineCount++;
+  }
+}
 
 /* rendering */
 void editorDrawRows() {
@@ -68,7 +73,7 @@ void editorProcessKeypress() {
     exit(0);
     break;
   default:
-    waddch(stdscr, (ch));
+    addCharacter(ch);
     break;
   }
 }
